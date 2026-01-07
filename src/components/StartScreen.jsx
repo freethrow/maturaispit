@@ -3,7 +3,7 @@ import Statistics from './Statistics'
 import Footer from './Footer'
 import DarkModeToggle from './DarkModeToggle'
 
-function StartScreen({ questionCount, setQuestionCount, onStart, stats, onResetStats, darkMode, toggleDarkMode }) {
+function StartScreen({ questionCount, setQuestionCount, selectedSection, setSelectedSection, sections, onStart, stats, onResetStats, darkMode, toggleDarkMode }) {
   return (
     <div className={`min-h-screen flex items-center justify-center p-8 pb-16 transition-colors ${darkMode ? 'bg-gray-900' : 'bg-white'}`}>
       <DarkModeToggle darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
@@ -20,7 +20,30 @@ function StartScreen({ questionCount, setQuestionCount, onStart, stats, onResetS
           className={`p-8 rounded-lg shadow-lg mb-6 ${darkMode ? 'bg-gray-800' : 'bg-gray-50'}`}
         >
           <h1 className={`text-4xl font-bold mb-6 text-center ${darkMode ? 'text-white' : 'text-gray-900'}`}>Матурски Квиз</h1>
-          <p className={`mb-8 text-center ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>Изаберите број питања за квиз</p>
+          <p className={`mb-8 text-center ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>Изаберите параметре квиза</p>
+
+          {/* Section Selection */}
+          <div className="mb-6">
+            <label className={`block text-sm font-medium mb-3 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+              Одељак
+            </label>
+            <select
+              value={selectedSection}
+              onChange={(e) => setSelectedSection(e.target.value)}
+              className={`w-full p-3 rounded-lg border-2 transition-colors ${
+                darkMode
+                  ? 'bg-gray-700 border-gray-600 text-white focus:border-blue-500'
+                  : 'bg-white border-gray-300 text-gray-900 focus:border-blue-500'
+              }`}
+            >
+              <option value="all">Сви одељци ({sections.reduce((sum, s) => sum + s.questions.length, 0)} питања)</option>
+              {sections.map(section => (
+                <option key={section.section_number} value={section.section_number}>
+                  {section.section_name} ({section.questions.length} питања)
+                </option>
+              ))}
+            </select>
+          </div>
 
           <div className="mb-6">
             <label className={`block text-sm font-medium mb-3 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>

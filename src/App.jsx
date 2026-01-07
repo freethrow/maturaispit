@@ -7,6 +7,7 @@ import ResultsScreen from './components/ResultsScreen'
 function App() {
   const [quizStarted, setQuizStarted] = useState(false)
   const [questionCount, setQuestionCount] = useState(5)
+  const [selectedSection, setSelectedSection] = useState('all')
   const [quizQuestions, setQuizQuestions] = useState([])
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
   const [shuffledAnswers, setShuffledAnswers] = useState([])
@@ -41,12 +42,18 @@ function App() {
   }
 
   const startQuiz = () => {
-    // Flatten all questions from all sections
-    const allQuestions = data.sections.flatMap(section => section.questions)
+    // Get questions based on selected section
+    let questionsPool = []
+    if (selectedSection === 'all') {
+      questionsPool = data.sections.flatMap(section => section.questions)
+    } else {
+      const section = data.sections.find(s => s.section_number === parseInt(selectedSection))
+      questionsPool = section ? section.questions : []
+    }
 
     // Select random questions based on user selection
-    const shuffled = [...allQuestions].sort(() => Math.random() - 0.5)
-    const selected = shuffled.slice(0, questionCount)
+    const shuffled = [...questionsPool].sort(() => Math.random() - 0.5)
+    const selected = shuffled.slice(0, Math.min(questionCount, questionsPool.length))
 
     setQuizQuestions(selected)
 
@@ -173,6 +180,9 @@ function App() {
       <StartScreen
         questionCount={questionCount}
         setQuestionCount={setQuestionCount}
+        selectedSection={selectedSection}
+        setSelectedSection={setSelectedSection}
+        sections={data.sections}
         onStart={startQuiz}
         stats={stats}
         onResetStats={resetStats}
