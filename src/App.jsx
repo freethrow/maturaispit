@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import data from './reformatted.json'
+import data from './hard.json'
 import StartScreen from './components/StartScreen'
 import QuizScreen from './components/QuizScreen'
 import ResultsScreen from './components/ResultsScreen'
@@ -7,7 +7,7 @@ import ResultsScreen from './components/ResultsScreen'
 function App() {
   const [quizStarted, setQuizStarted] = useState(false)
   const [questionCount, setQuestionCount] = useState(5)
-  const [selectedSection, setSelectedSection] = useState('all')
+  const [selectedSection, setSelectedSection] = useState('hard')
   const [quizQuestions, setQuizQuestions] = useState([])
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
   const [shuffledAnswers, setShuffledAnswers] = useState([])
@@ -44,7 +44,12 @@ function App() {
   const startQuiz = () => {
     // Get questions based on selected section
     let questionsPool = []
-    if (selectedSection === 'all') {
+    if (selectedSection === 'hard') {
+      // Filter only hard questions from all sections
+      questionsPool = data.sections.flatMap(section =>
+        section.questions.filter(q => q.hard === true)
+      )
+    } else if (selectedSection === 'all') {
       questionsPool = data.sections.flatMap(section => section.questions)
     } else {
       const section = data.sections.find(s => s.section_number === parseInt(selectedSection))

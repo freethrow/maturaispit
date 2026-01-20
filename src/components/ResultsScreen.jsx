@@ -118,7 +118,10 @@ function ResultsScreen({ userAnswers, score, totalPoints, quizQuestions, darkMod
                     transition={{ delay: 0.6 + index * 0.1 }}
                     className={`p-4 rounded-lg border-2 ${darkMode ? 'bg-gray-700 border-red-800' : 'bg-white border-red-200'}`}
                   >
-                    <h3 className={`font-semibold mb-2 ${darkMode ? 'text-white' : 'text-gray-900'}`}>{answer.question.question}</h3>
+                    <h3 className={`font-semibold mb-2 ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+                      <span className={`mr-2 ${darkMode ? 'text-blue-400' : 'text-blue-600'}`}>#{answer.question.number}</span>
+                      {answer.question.question}
+                    </h3>
 
                     {answer.question.has_picture && (
                       <div className="mb-3 flex justify-center">

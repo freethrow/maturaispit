@@ -4,6 +4,13 @@ import Footer from './Footer'
 import DarkModeToggle from './DarkModeToggle'
 
 function StartScreen({ questionCount, setQuestionCount, selectedSection, setSelectedSection, sections, onStart, stats, onResetStats, darkMode, toggleDarkMode }) {
+  // Calculate the position percentage for the slider thumb
+  const getSliderPosition = () => {
+    const min = 5;
+    const max = 50;
+    return ((questionCount - min) / (max - min)) * 100;
+  };
+
   return (
     <div className={`min-h-screen flex items-center justify-center p-8 pb-16 transition-colors ${darkMode ? 'bg-gray-900' : 'bg-white'}`}>
       <DarkModeToggle darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
@@ -30,13 +37,13 @@ function StartScreen({ questionCount, setQuestionCount, selectedSection, setSele
             <select
               value={selectedSection}
               onChange={(e) => setSelectedSection(e.target.value)}
-              className={`w-full p-3 rounded-lg border-2 transition-colors ${
-                darkMode
+              className={`w-full p-3 rounded-lg border-2 transition-colors ${darkMode
                   ? 'bg-gray-700 border-gray-600 text-white focus:border-blue-500'
                   : 'bg-white border-gray-300 text-gray-900 focus:border-blue-500'
-              }`}
+                }`}
             >
               <option value="all">Сви одељци ({sections.reduce((sum, s) => sum + s.questions.length, 0)} питања)</option>
+              <option value="hard">САМО ТЕШКА ПИТАЊА ({sections.reduce((sum, s) => sum + s.questions.filter(q => q.hard === true).length, 0)} питања)</option>
               {sections.map(section => (
                 <option key={section.section_number} value={section.section_number}>
                   {section.section_name} ({section.questions.length} питања)
@@ -45,19 +52,56 @@ function StartScreen({ questionCount, setQuestionCount, selectedSection, setSele
             </select>
           </div>
 
+          {/* Question Count Slider */}
           <div className="mb-6">
             <label className={`block text-sm font-medium mb-3 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
-              Број питања: {questionCount}
+              Број питања:
             </label>
-            <input
-              type="range"
-              min="5"
-              max="50"
-              step="5"
-              value={questionCount}
-              onChange={(e) => setQuestionCount(Number(e.target.value))}
-              className={`w-full h-2 rounded-lg appearance-none cursor-pointer ${darkMode ? 'bg-blue-900' : 'bg-blue-200'}`}
-            />
+
+            {/* Slider container with relative positioning */}
+            <div className="relative pt-10 pb-2">
+              {/* Value indicator positioned above the thumb with arrow */}
+              <div
+                className="absolute -top-1 transform -translate-x-1/2 transition-all duration-150 ease-out pointer-events-none"
+                style={{ left: `${getSliderPosition()}%` }}
+              >
+                <div className="relative">
+                  <span className={`inline-block px-3 py-1.5 rounded-lg text-sm font-bold shadow-lg ${darkMode ? 'bg-blue-600 text-white' : 'bg-blue-500 text-white'
+                    }`}>
+                    {questionCount}
+                  </span>
+                  {/* Arrow pointing down */}
+                  <div
+                    className={`absolute left-1/2 transform -translate-x-1/2 w-0 h-0 ${darkMode ? 'arrow-down-dark' : 'arrow-down-light'
+                      }`}
+                    style={{
+                      borderLeft: '6px solid transparent',
+                      borderRight: '6px solid transparent',
+                      borderTop: darkMode ? '6px solid #2563eb' : '6px solid #3b82f6',
+                      bottom: '-5px'
+                    }}
+                  />
+                </div>
+              </div>
+
+              {/* Slider input */}
+              <input
+                type="range"
+                min="5"
+                max="50"
+                step="5"
+                value={questionCount}
+                onChange={(e) => setQuestionCount(Number(e.target.value))}
+                className={`w-full h-2 rounded-lg appearance-none cursor-pointer ${darkMode ? 'bg-blue-900' : 'bg-blue-200'}`}
+                style={{
+                  background: darkMode
+                    ? `linear-gradient(to right, #1e40af 0%, #1e40af ${getSliderPosition()}%, #1e3a8a ${getSliderPosition()}%, #1e3a8a 100%)`
+                    : `linear-gradient(to right, #3b82f6 0%, #3b82f6 ${getSliderPosition()}%, #bfdbfe ${getSliderPosition()}%, #bfdbfe 100%)`
+                }}
+              />
+            </div>
+
+            {/* Scale markers */}
             <div className={`flex justify-between text-xs mt-2 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
               <span>5</span>
               <span>10</span>

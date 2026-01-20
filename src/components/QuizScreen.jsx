@@ -42,7 +42,7 @@ function QuizScreen({
 
         <div className="mb-6 flex justify-between items-center">
           <div className={darkMode ? 'text-gray-300' : 'text-gray-600'}>
-            Питање {currentQuestionIndex + 1} од {totalQuestions}
+            Питање {currentQuestionIndex + 1} од {totalQuestions} <span className={`ml-2 font-semibold ${darkMode ? 'text-blue-400' : 'text-blue-600'}`}>(#{currentQuestion.number})</span>
           </div>
           <div className="text-xl font-bold text-blue-600">
             Поени: {score} / {totalPoints}
