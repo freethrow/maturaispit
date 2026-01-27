@@ -3,6 +3,7 @@ import data from './hard.json'
 import StartScreen from './components/StartScreen'
 import QuizScreen from './components/QuizScreen'
 import ResultsScreen from './components/ResultsScreen'
+import WrongAnswersScreen from './components/WrongAnswersScreen'
 
 function App() {
   const [quizStarted, setQuizStarted] = useState(false)
@@ -33,6 +34,11 @@ function App() {
     const saved = localStorage.getItem('darkMode')
     return saved ? JSON.parse(saved) : false
   })
+  const [wrongAnswers, setWrongAnswers] = useState(() => {
+    const saved = localStorage.getItem('wrongAnswers')
+    return saved ? JSON.parse(saved) : {}
+  })
+  const [showWrongAnswers, setShowWrongAnswers] = useState(false)
   const statsUpdatedRef = useRef(false)
 
   const toggleDarkMode = () => {
@@ -84,6 +90,11 @@ function App() {
     }
     setStats(emptyStats)
     localStorage.setItem('quizStats', JSON.stringify(emptyStats))
+  }
+
+  const clearWrongAnswers = () => {
+    setWrongAnswers({})
+    localStorage.setItem('wrongAnswers', JSON.stringify({}))
   }
 
   const exitQuiz = () => {
@@ -157,6 +168,21 @@ function App() {
 
     if (isCorrect) {
       setScore(score + currentQuestion.points)
+    } else {
+      // Track wrong answer with counter
+      const questionId = currentQuestion.number
+      setWrongAnswers(prev => {
+        const updated = {
+          ...prev,
+          [questionId]: {
+            question: currentQuestion,
+            count: (prev[questionId]?.count || 0) + 1,
+            lastAnswered: new Date().toISOString()
+          }
+        }
+        localStorage.setItem('wrongAnswers', JSON.stringify(updated))
+        return updated
+      })
     }
 
     // Store user's answer for this question
@@ -179,6 +205,19 @@ function App() {
     }, 2000)
   }
 
+  // Show wrong answers screen
+  if (showWrongAnswers) {
+    return (
+      <WrongAnswersScreen
+        wrongAnswers={wrongAnswers}
+        onBack={() => setShowWrongAnswers(false)}
+        onClearWrongAnswers={clearWrongAnswers}
+        darkMode={darkMode}
+        toggleDarkMode={toggleDarkMode}
+      />
+    )
+  }
+
   // Show start screen if quiz hasn't started
   if (!quizStarted) {
     return (
@@ -193,6 +232,8 @@ function App() {
         onResetStats={resetStats}
         darkMode={darkMode}
         toggleDarkMode={toggleDarkMode}
+        wrongAnswersCount={Object.keys(wrongAnswers).length}
+        onShowWrongAnswers={() => setShowWrongAnswers(true)}
       />
     )
   }

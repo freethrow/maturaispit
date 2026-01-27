@@ -3,7 +3,7 @@ import Statistics from './Statistics'
 import Footer from './Footer'
 import DarkModeToggle from './DarkModeToggle'
 
-function StartScreen({ questionCount, setQuestionCount, selectedSection, setSelectedSection, sections, onStart, stats, onResetStats, darkMode, toggleDarkMode }) {
+function StartScreen({ questionCount, setQuestionCount, selectedSection, setSelectedSection, sections, onStart, stats, onResetStats, darkMode, toggleDarkMode, wrongAnswersCount, onShowWrongAnswers }) {
   // Calculate the position percentage for the slider thumb
   const getSliderPosition = () => {
     const min = 5;
@@ -123,6 +123,19 @@ function StartScreen({ questionCount, setQuestionCount, selectedSection, setSele
             className="w-full bg-blue-600 text-white py-4 rounded-lg font-bold text-lg hover:bg-blue-700 transition-colors"
           >
             Почни квиз
+          </motion.button>
+
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            onClick={onShowWrongAnswers}
+            className={`w-full mt-3 py-3 rounded-lg font-medium transition-colors ${
+              darkMode
+                ? 'bg-gray-700 text-white hover:bg-gray-600'
+                : 'bg-gray-200 text-gray-800 hover:bg-gray-300'
+            }`}
+          >
+            Погрешно одговорени {wrongAnswersCount > 0 && `(${wrongAnswersCount})`}
           </motion.button>
         </motion.div>
 
