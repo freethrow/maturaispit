@@ -55,6 +55,11 @@ function App() {
       questionsPool = data.sections.flatMap(section =>
         section.questions.filter(q => q.hard === true)
       )
+    } else if (selectedSection === 'extreme') {
+      // Filter only extreme questions from all sections
+      questionsPool = data.sections.flatMap(section =>
+        section.questions.filter(q => q.extreme === true)
+      )
     } else if (selectedSection === 'all') {
       questionsPool = data.sections.flatMap(section => section.questions)
     } else {

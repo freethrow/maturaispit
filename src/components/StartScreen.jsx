@@ -44,6 +44,7 @@ function StartScreen({ questionCount, setQuestionCount, selectedSection, setSele
             >
               <option value="all">Сви одељци ({sections.reduce((sum, s) => sum + s.questions.length, 0)} питања)</option>
               <option value="hard">САМО ТЕШКА ПИТАЊА ({sections.reduce((sum, s) => sum + s.questions.filter(q => q.hard === true).length, 0)} питања)</option>
+              <option value="extreme">ЕКСТРЕМНО ТЕШКА ПИТАЊА ({sections.reduce((sum, s) => sum + s.questions.filter(q => q.extreme === true).length, 0)} питања)</option>
               {sections.map(section => (
                 <option key={section.section_number} value={section.section_number}>
                   {section.section_name} ({section.questions.length} питања)
